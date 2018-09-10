@@ -13,7 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Zxg321\\ZCms\\": "src/"
+            "Zxg321\\Zcms\\": "src/"
         }
     },
     "require": {
