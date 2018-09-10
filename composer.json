@@ -1,6 +1,6 @@
 {
-    "name"       : "zxg321/z-cms",
-    "description": "z-cms",
+    "name"       : "zxg321/zcms",
+    "description": "zcms",
     "type"       : "library",
     "keywords"   : ["laravel", "php", "cms"],
     "homepage"   : "https://github.com/zxg321/z-cms",
@@ -28,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Zxg321\\ZCms\\ZcmsServiceProvider"
+                "Zxg321\\Zcms\\ZcmsServiceProvider"
             ]
         }
     }
