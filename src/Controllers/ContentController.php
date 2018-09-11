@@ -34,6 +34,12 @@ class ContentController extends Controller
 
             else $content->body(NetCategory::tree(function ($tree) {
                 //$tree->isList();
+                $tree->isList = true;
+                $tree->useAll = true;
+                $tree->disableCreate();
+                $tree->disableSave();
+                $tree->disableRefresh();
+                $tree->setView(['tree'   => 'zcms::tree','branch' => 'zcms::tree.list',]);
                 $tree->branch(function ($branch) {
                     //$src = config('admin.upload.host') . '/' . $branch['logo'] ;
                     //$logo = "<img src='$src' style='max-width:30px;max-height:30px' class='img'/>";
