@@ -1,34 +1,41 @@
 <?php
 
-namespace App\Model;
+namespace Zxg321\Zcms\Database;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Model\AdminAudituser;
-use App\Model\AdminAuditstep;
-class AdminAudit extends Model
+use Zxg321\Zcms\Database\Audit\User as AuditUser;
+use Zxg321\Zcms\Database\Audit\Step as AuditStep;
+class Audit extends Model
 {
-    protected $table = 'admin_audit';
+    protected $table = 'zcms_audit';
     
     public static $audit_type=['1' => '仅需一个审核员通过', '2'=> '必须所有审核员通过','3'=>'使用设定审核流程'];
     public static $audit_type1=['1' => '仅需一个审核员通过', '2'=> '必须所有审核员通过'];
-    
+    public function __construct(array $attributes = [])
+    {
+        $this->setTable(config('zcms.db_prefix','zcms_').'audit');
+        parent::__construct($attributes);
+        //$this->setParentColumn('parent_id');
+        //$this->setOrderColumn('sort_order');
+        //$this->setTitleColumn('cate_name');
+    }
     public function step()
     {
-        return $this->hasMany('AdminAuditstep','audit_id','id');
+        return $this->hasMany('AuditStep','audit_id','id');
     }
     public function user()
     {
-        return $this->hasMany('AdminAudituser','audit_id','id');
+        return $this->hasMany('AuditUser','audit_id','id');
     }
     public static function Start($menu)//开始审核流程
     {
         $row=['st'=>2,'json'=>[]];
         $user=[];
         if($menu->is_a_one==3){//使用设定审核流程
-            if(!$audit=AdminAudit::find($menu->audit_id)){
+            if(!$audit=Audit::find($menu->audit_id)){
                 die('审核流程 (ID:'.$menu->audit_id.') 已经被删除不能进行审核，请重新设置本栏目的审核流程。');
             }
-            $step=AdminAuditstep::where('audit_id',$menu->audit_id)->orderBy('id')->get();
+            $step=AuditStep::where('audit_id',$menu->audit_id)->orderBy('id')->get();
             if(count($step)<1){
                 $row['st']=1;//没有审核流程，直接通过。
             }

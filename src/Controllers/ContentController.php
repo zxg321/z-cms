@@ -2,9 +2,9 @@
 
 namespace Zxg321\Zcms\Controllers;
 
-use App\Model\NetContent;
-use App\Model\NetCategory;
-use App\Model\AdminAudit;
+use Zxg321\Zcms\Database\Content as NetContent;
+use Zxg321\Zcms\Database\Category as NetCategory;
+use Zxg321\Zcms\Database\Audit as AdminAudit;
 use Illuminate\Http\Request;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -33,7 +33,7 @@ class ContentController extends Controller
             if($mid>0 or $mid=='all')$content->body($this->grid($mid));
 
             else $content->body(NetCategory::tree(function ($tree) {
-                $tree->isList();
+                //$tree->isList();
                 $tree->branch(function ($branch) {
                     //$src = config('admin.upload.host') . '/' . $branch['logo'] ;
                     //$logo = "<img src='$src' style='max-width:30px;max-height:30px' class='img'/>";
@@ -43,7 +43,7 @@ class ContentController extends Controller
                     $coden=$codes[$code];
                     $countInfo=0;
                     $countInfo=NetContent::where('category_id',$branch['id'])->count();
-                    return "<a href='/admin/content?id={$branch['id']}'>{$branch['id']} - {$branch['title']} [$coden] （共 $countInfo 条）".($branch['st']?'':'[关闭]')." ".($branch['is_url']?'[外链]':'')."</a>";
+                    return "<a href='/admin/zcms/content?id={$branch['id']}'>{$branch['id']} - {$branch['title']} [$coden] （共 $countInfo 条）".($branch['st']?'':'[关闭]')." ".($branch['is_url']?'[外链]':'')."</a>";
                 });
                 $tree->query(function ($model) {
                     return $model->whereIn('code', ['news','newsindex','newslist']);

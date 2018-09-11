@@ -5,7 +5,7 @@ namespace Zxg321\Zcms\Database;
 use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Traits\AdminBuilder;
 use Encore\Admin\Traits\ModelTree;
-use App\Model\NetContent;
+use Zxg321\Zcms\Database\Content;
 class Category extends Model
 {
     use ModelTree, AdminBuilder;
@@ -31,18 +31,18 @@ class Category extends Model
     }
     public function content()
     {
-        return $this->hasOne(NetContent::class);
+        return $this->hasOne(Content::class);
     }
     //导航条
     public static function getNavbar($item){
         if(is_null($item))return;
         if($item->parent_id==0){//当前是次高级了
             echo '<a href="/">首页</a>';
-            echo ' > <a href="'.NetCategory::setURL($item).'">'.$item->title.'</a>';
+            echo ' > <a href="'.Category::setURL($item).'">'.$item->title.'</a>';
         }else{
-            if($pmenu=NetCategory::find($item->parent_id)){
-                NetCategory::getNavbar($pmenu);
-                echo ' > <a href="'.NetCategory::setURL($item).'">'.$item->title.'</a>';
+            if($pmenu=Category::find($item->parent_id)){
+                Category::getNavbar($pmenu);
+                echo ' > <a href="'.Category::setURL($item).'">'.$item->title.'</a>';
             }
             
         }
@@ -51,13 +51,13 @@ class Category extends Model
     //返回左侧菜单项目
     public static function getMenu($item){
         $re['parent']=$item;$re['menu']=[];
-        $menu=NetCategory::where([['parent_id',$item->id],['st',1]])->get();
+        $menu=Category::where([['parent_id',$item->id],['st',1]])->get();
         if( count($menu)>0){//有下一级直接返回下一级
             $re['menu']=$menu;
         }else{
             if($item->parent_id!=0){
-                $re['parent']=NetCategory::find($item->parent_id);
-                $menu=NetCategory::where([['parent_id',$item->parent_id],['st',1]])->get();
+                $re['parent']=Category::find($item->parent_id);
+                $menu=Category::where([['parent_id',$item->parent_id],['st',1]])->get();
                 $re['menu']=$menu;
             }
         }
@@ -69,7 +69,7 @@ class Category extends Model
         return $url;
     }
     public static function getCateList($id=0,$num=6){
-        $myMenu=NetCategory::where('parent_id',$id)->where('st',1)->orderBy('sort_order', 'asc')->get();
+        $myMenu=Category::where('parent_id',$id)->where('st',1)->orderBy('sort_order', 'asc')->get();
         $menu='';$item='';
         foreach ($myMenu as $key => $value) {
             $is_long='';
@@ -78,7 +78,7 @@ class Category extends Model
             $menu.="<li><a href=\"/category_".$value->id.".html\"$is_long>".$value->title."</a></li>";
             $item.='<div class="con"><ul>';
             $wheresq=$value->id.($value->children_list?','.$value->children_list:'');
-            $myItem=NetContent::whereRaw('category_id in ('.$wheresq.')')->orderBy('id', 'desc')->take(6)->get();
+            $myItem=Content::whereRaw('category_id in ('.$wheresq.')')->orderBy('id', 'desc')->take(6)->get();
             foreach ($myItem as $key1 => $value1) {
                 $item.="<li><span>".$value1->created_at->format('Y-m-d')."</span><a href=\"/content_".$value1->id.".html\">".$value1->title."</a></li>";
             }
