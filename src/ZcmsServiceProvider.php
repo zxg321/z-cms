@@ -9,6 +9,9 @@ class ZcmsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'zcms');
+        if (file_exists($routes = __DIR__.'/routes.php')) {
+            $this->loadRoutesFrom($routes);
+        }
         $this->publishes([
             __DIR__.'/../config/zcms.php' => config_path('zcms.php')
         ], 'zcms-config');
